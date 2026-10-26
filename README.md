@@ -58,11 +58,23 @@ npm run test
 # Unit тесты с coverage
 npm run test:coverage
 
-# Watch mode
+# Watch mode (автоматический перезапуск при изменениях)
 npm run test:watch
 
-# Запуск с логированием
-./scripts/test-runner.sh
+# Запуск с логированием и сохранением результатов
+npm run test:run
+
+# Полная проверка (typecheck + tests + build)
+npm run test:full
+
+# Очистка старых логов (оставить последние 5 запусков)
+npm run test:cleanup
+
+# Настройка git hooks
+npm run setup:hooks
+
+# Инициализация git репозитория
+npm run setup:repo
 ```
 
 ### Структура тестов
