@@ -4,15 +4,24 @@ import { BrowserRouter } from 'react-router-dom';
 import { AppContext } from '../context/AppContext';
 import { useAppStore } from '../store/useAppStore';
 import { Layout } from './Layout';
+import type { ReactNode } from 'react';
 
-function renderWithProviders(ui: React.ReactElement) {
+function TestWrapper({ children }: { children: ReactNode }) {
   const store = useAppStore();
-  return render(
+  return (
     <AppContext.Provider value={store}>
       <BrowserRouter>
-        {ui}
+        {children}
       </BrowserRouter>
     </AppContext.Provider>
+  );
+}
+
+function renderWithProviders(ui: React.ReactElement) {
+  return render(
+    <TestWrapper>
+      {ui}
+    </TestWrapper>
   );
 }
 

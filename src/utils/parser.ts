@@ -55,19 +55,17 @@ function applySubstitutions(content: string, table: Record<string, string>): str
 function parseBlocks(content: string): { blocks: ParsedBlock[]; mainContent: string; deferredContent: string } {
   const blocks: ParsedBlock[] = [];
   const lines = content.split('\n');
-  let currentBlock: ParsedBlock | null = null;
-  let blockContent: string[] = [];
+  const blockStack: Array<{ block: ParsedBlock; content: string[] }> = [];
+  const mainContent: string[] = [];
+  const deferredContent: string[] = [];
   let inFold = false;
-  let foldContent: string[] = [];
-  let mainContent: string[] = [];
-  let depth = 0;
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
     const blockStart = line.match(/^:::\s+(\w+)(?:\s+\{([^}]*)\})?/);
     const blockEnd = line.match(/^:::\s*$/);
 
-    if (blockStart && !currentBlock) {
+    if (blockStart) {
       const name = blockStart[1];
       const attrsStr = blockStart[2] || '';
       const attrs: Record<string, string> = {};
@@ -79,31 +77,41 @@ function parseBlocks(content: string): { blocks: ParsedBlock[]; mainContent: str
         attrs[attrMatch[1]] = attrMatch[2];
       }
 
-      currentBlock = { name, attrs, content: '', html: '' };
-      blockContent = [];
-      depth++;
+      const newBlock: ParsedBlock = { name, attrs, content: '', html: '' };
+      blockStack.push({ block: newBlock, content: [] });
 
       if (name === 'fold') {
         inFold = true;
       }
-    } else if (blockEnd && currentBlock) {
-      depth--;
-      currentBlock.content = blockContent.join('\n');
-      currentBlock.html = renderBlock(currentBlock);
-      blocks.push(currentBlock);
+    } else if (blockEnd && blockStack.length > 0) {
+      const { block, content: blockContent } = blockStack.pop()!;
+      block.content = blockContent.join('\n');
+      
+      // Recursively parse nested blocks
+      const nested = parseBlocks(block.content);
+      block.html = renderBlock({ ...block, content: nested.mainContent || block.content });
+      
+      blocks.push(block);
 
-      if (inFold) {
-        foldContent.push(currentBlock.html);
-        inFold = false;
+      if (blockStack.length === 0) {
+        // Top-level block
+        if (block.name === 'fold') {
+          deferredContent.push(block.html);
+          inFold = false;
+        } else {
+          mainContent.push(block.html);
+        }
       } else {
-        mainContent.push(currentBlock.html);
+        // Nested block - add to parent's content
+        const parent = blockStack[blockStack.length - 1];
+        parent.content.push(block.html);
       }
-
-      currentBlock = null;
-      blockContent = [];
-    } else if (currentBlock) {
-      blockContent.push(line);
+    } else if (blockStack.length > 0) {
+      // Inside a block
+      const current = blockStack[blockStack.length - 1];
+      current.content.push(line);
     } else {
+      // Outside any block
       mainContent.push(line);
     }
   }
@@ -111,7 +119,7 @@ function parseBlocks(content: string): { blocks: ParsedBlock[]; mainContent: str
   return {
     blocks,
     mainContent: mainContent.join('\n'),
-    deferredContent: foldContent.join('\n'),
+    deferredContent: deferredContent.join('\n'),
   };
 }
 
