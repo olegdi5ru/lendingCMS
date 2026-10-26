@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { parseLandingMD } from '../utils/parser';
-import { ArrowLeft, Save, Eye, Code, Smartphone, Monitor, Tablet, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Code, Smartphone, Monitor, Tablet } from 'lucide-react';
 
 export function PageEditor() {
   const { id } = useParams<{ id: string }>();

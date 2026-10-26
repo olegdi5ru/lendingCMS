@@ -1,4 +1,4 @@
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
   LayoutDashboard, FileText, Replace, Blocks, Building2,
@@ -16,7 +16,6 @@ const NAV_ITEMS = [
 
 export function Layout() {
   const { tenants, activeTenantId, setActiveTenantId, activeTenant } = useApp();
-  const navigate = useNavigate();
 
   return (
     <div className="flex h-screen bg-slate-50">

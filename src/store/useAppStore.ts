@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import type { Tenant, Page, SubstitutionTable, UIBlock, ABVariant } from '../types';
+import { useState, useCallback, useMemo } from 'react';
+import type { Tenant, Page, SubstitutionTable, UIBlock } from '../types';
 
 // Demo Tenants
 const DEMO_TENANTS: Tenant[] = [
@@ -251,19 +251,28 @@ const DEMO_BLOCKS: UIBlock[] = [
 ];
 
 export function useAppStore() {
-  const [tenants, setTenants] = useState<Tenant[]>(DEMO_TENANTS);
+  const [tenants] = useState<Tenant[]>(DEMO_TENANTS);
   const [pages, setPages] = useState<Page[]>(DEMO_PAGES);
   const [substitutions, setSubstitutions] = useState<SubstitutionTable[]>(DEMO_SUBSTITUTIONS);
   const [blocks] = useState<UIBlock[]>(DEMO_BLOCKS);
   const [activeTenantId, setActiveTenantId] = useState<string>(DEMO_TENANTS[0].id);
 
-  const activeTenant = tenants.find(t => t.id === activeTenantId) || tenants[0];
+  const activeTenant = useMemo(() => {
+    return tenants.find(t => t.id === activeTenantId) || tenants[0];
+  }, [tenants, activeTenantId]);
 
-  const tenantPages = pages.filter(p => p.tenantId === activeTenantId);
-  const tenantSubstitutions = substitutions.filter(s => s.tenantId === activeTenantId);
+  const tenantPages = useMemo(() => {
+    return pages.filter(p => p.tenantId === activeTenantId);
+  }, [pages, activeTenantId]);
+
+  const tenantSubstitutions = useMemo(() => {
+    return substitutions.filter(s => s.tenantId === activeTenantId);
+  }, [substitutions, activeTenantId]);
 
   const updatePage = useCallback((id: string, updates: Partial<Page>) => {
-    setPages(prev => prev.map(p => p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p));
+    setPages(prev => prev.map(p => 
+      p.id === id ? { ...p, ...updates, updatedAt: new Date().toISOString() } : p
+    ));
   }, []);
 
   const addPage = useCallback((page: Omit<Page, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -277,7 +286,9 @@ export function useAppStore() {
   }, []);
 
   const updateSubstitution = useCallback((id: string, updates: Partial<SubstitutionTable>) => {
-    setSubstitutions(prev => prev.map(s => s.id === id ? { ...s, ...updates, updatedAt: new Date().toISOString() } : s));
+    setSubstitutions(prev => prev.map(s => 
+      s.id === id ? { ...s, ...updates, updatedAt: new Date().toISOString() } : s
+    ));
   }, []);
 
   const addSubstitution = useCallback((sub: Omit<SubstitutionTable, 'id' | 'createdAt' | 'updatedAt'>) => {

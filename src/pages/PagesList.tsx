@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
-import { Plus, FileText, Edit3, Eye, Archive, MoreVertical } from 'lucide-react';
+import { Plus, FileText } from 'lucide-react';
 
 export function PagesList() {
   const { tenantPages, activeTenant } = useApp();

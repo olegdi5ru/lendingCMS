@@ -10,25 +10,31 @@ import { Tenants } from './pages/Tenants';
 import { SemanticSearch } from './pages/SemanticSearch';
 import { AppContext } from './context/AppContext';
 
-export default function App() {
+function AppContent() {
   const store = useAppStore();
 
   return (
     <AppContext.Provider value={store}>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Navigate to="/dashboard" replace />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="pages" element={<PagesList />} />
-            <Route path="pages/:id" element={<PageEditor />} />
-            <Route path="substitutions" element={<Substitutions />} />
-            <Route path="blocks" element={<Blocks />} />
-            <Route path="tenants" element={<Tenants />} />
-            <Route path="semantic" element={<SemanticSearch />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Navigate to="/dashboard" replace />} />
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="pages" element={<PagesList />} />
+          <Route path="pages/:id" element={<PageEditor />} />
+          <Route path="substitutions" element={<Substitutions />} />
+          <Route path="blocks" element={<Blocks />} />
+          <Route path="tenants" element={<Tenants />} />
+          <Route path="semantic" element={<SemanticSearch />} />
+        </Route>
+      </Routes>
     </AppContext.Provider>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
