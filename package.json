@@ -14,7 +14,8 @@
     "test:full": "bash scripts/full-test-suite.sh",
     "test:cleanup": "bash scripts/log-cleanup.sh",
     "setup:hooks": "bash scripts/setup-hooks.sh",
-    "setup:repo": "bash scripts/init-repo.sh"
+    "setup:repo": "bash scripts/init-repo.sh",
+    "fix:deps": "npm cache clean --force && npm install uuid@latest recharts@latest"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.1.0",
@@ -32,8 +33,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.0",
-    "recharts": "^2.10.0",
-    "uuid": "^9.0.1",
+    "recharts": "^3.0.0",
+    "uuid": "^11.0.0",
     "vitest": "^5.0.5"
   },
   "devDependencies": {
@@ -41,7 +42,7 @@
     "@types/canvas-confetti": "^1.6.4",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@types/uuid": "^9.0.7",
+    "@types/uuid": "^11.0.0",
     "@vitejs/plugin-react": "^4.3.4",
     "tailwindcss": "^4.1.7",
     "typescript": "^5.7.0",
